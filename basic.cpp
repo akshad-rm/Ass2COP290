@@ -85,22 +85,23 @@ void solve(int n,int x,vector<pair<string,db>>&data,vector<pair<string,string>>&
         }
         
         
-        if(i!=row_count-1 &&  rise_fall_count>=n && hold_quantity<x){
+        if(rise_fall_count>=n && hold_quantity<x){
             cash_in_hand-=data[i].second;
             daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
             order_stats.push_back({data[i].first,"BUY","1",to_string(data[i].second)});
             hold_quantity++;
         }
         
-        else if(i!=row_count-1 && rise_fall_count<=(-1*n) && hold_quantity>(-1*x)){
+        else if(rise_fall_count<=(-1*n) && hold_quantity>(-1*x)){
             cash_in_hand+=data[i].second;
             daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
             order_stats.push_back({data[i].first,"SELL","1",to_string(data[i].second)});
             hold_quantity--;
         }
-        else if(i!=row_count-1 && i>n-1){
+        else if(i>n-1){
             daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
         }
+        
         
         
         
@@ -109,19 +110,19 @@ void solve(int n,int x,vector<pair<string,db>>&data,vector<pair<string,string>>&
     if(hold_quantity>0){
         cash_in_hand += data[row_count-1].second*hold_quantity;
         
-        daily_cashflow.push_back({data[row_count-1].first,to_string(cash_in_hand)});
-        order_stats.push_back({data[row_count-1].first,"SELL",to_string(abs(hold_quantity)),to_string(data[row_count-1].second)});
+        
         hold_quantity = 0;
         
     }
     else if(hold_quantity<0){
         cash_in_hand -= ((data[row_count-1].second)*abs(hold_quantity));
         
-        daily_cashflow.push_back({data[row_count-1].first,to_string(cash_in_hand)});
-        order_stats.push_back({data[row_count-1].first,"BUY",to_string(abs(hold_quantity)),to_string(data[row_count-1].second)});
+        
         hold_quantity = 0;
     }
-    
+    ofstream res_file("final_pnl.txt");
+    res_file<<cash_in_hand<<endl;
+    res_file.close();
     
     
     
