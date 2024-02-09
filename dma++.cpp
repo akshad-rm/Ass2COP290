@@ -82,19 +82,19 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
             ama  = ((1-sf)*ama) + (sf*data[i].second); 
         }
         if((100*(data[i].second-ama))>= (100+p)*ama && hold_quantity<x){
-            if(trades.size()>0 && i-trades[-1].first>=max_hold_days){
-                if(trades[-1].second==1){
+            if(trades.size()>0 && i-trades.back().first>=max_hold_days){
+                if(trades.back().second==1){
                     trades.pop_back();
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    trades.insert(trades.begin(),{i,1});
+                    trades.insert(trades.begin(),pair<int,int>(i,1));
                 }
                 else{
                     cash_in_hand-=data[i].second;
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    order_stats.push_back({data[i].first,"BUY","1",to_string(data[i].second)});
+                    order_stats.push_back({data[i].first,"BUY1","1",to_string(data[i].second)});
                     hold_quantity++;
                     trades.pop_back();
-                    trades.insert(trades.begin(),{i,1});
+                    //trades.insert(trades.begin(),{i,1});
                 }
             }
             else{
@@ -105,35 +105,35 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
                 if(j==-1){
                     cash_in_hand-=data[i].second;
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    order_stats.push_back({data[i].first,"BUY","1",to_string(data[i].second)});
+                    order_stats.push_back({data[i].first,"BUY2","1",to_string(data[i].second)});
                     hold_quantity++;
-                    trades.insert(trades.begin(),{i,1});
+                    trades.insert(trades.begin(),pair<int,int>(i,1));
                 }
                 else{
                     cash_in_hand-=data[i].second;
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    order_stats.push_back({data[i].first,"BUY","1",to_string(data[i].second)});
+                    order_stats.push_back({data[i].first,"BUY3","1",to_string(data[i].second)});
                     hold_quantity++;
                     trades.erase(trades.begin()+j);
-                    trades.insert(trades.begin(),{i,1});
+                    //trades.insert(trades.begin(),{i,1});
                 }
             }    
         }
         
         else if((100*(ama-data[i].second))>= (100+p)*ama && hold_quantity>(-1*x)){
-            if(trades.size()>0 && i-trades[-1].first>=max_hold_days){
-                if(trades[-1].second==-1){
+            if(trades.size()>0 && i-trades.back().first>=max_hold_days){
+                if(trades.back().second==-1){
                     trades.pop_back();
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    trades.insert(trades.begin(),{i,-1});
+                    trades.insert(trades.begin(),pair<int,int>(i,-1));
                 }
                 else{
                     cash_in_hand+=data[i].second;
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    order_stats.push_back({data[i].first,"SELL","1",to_string(data[i].second)});
+                    order_stats.push_back({data[i].first,"SELL1","1",to_string(data[i].second)});
                     hold_quantity--;
                     trades.pop_back();
-                    trades.insert(trades.begin(),{i,-1});
+                    //trades.insert(trades.begin(),{i,-1});
                 }
             }
             else{
@@ -144,37 +144,37 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
                 if(j==-1){
                     cash_in_hand+=data[i].second;
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    order_stats.push_back({data[i].first,"SELL","1",to_string(data[i].second)});
+                    order_stats.push_back({data[i].first,"SELL2","1",to_string(data[i].second)});
                     hold_quantity--;
-                    trades.insert(trades.begin(),{i,-1});
+                    trades.insert(trades.begin(),pair<int,int>(i,-1));
                 }
                 else{
                     cash_in_hand+=data[i].second;
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    order_stats.push_back({data[i].first,"SELL","1",to_string(data[i].second)});
+                    order_stats.push_back({data[i].first,"SELL3","1",to_string(data[i].second)});
                     hold_quantity--;
                     trades.erase(trades.begin()+j);
-                    trades.insert(trades.begin(),{i,-1});
+                    //trades.insert(trades.begin(),{i,-1});
                 }
             }    
         }
         else{
-            if(trades.size()>0 && i-trades[-1].first>=max_hold_days){
-                if(trades[-1].second==1 && hold_quantity>(-1*x)){
+            if(trades.size()>0 && i-trades.back().first>=max_hold_days){
+                if(trades.back().second==1 && hold_quantity>(-1*x)){
                     cash_in_hand+=data[i].second;
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    order_stats.push_back({data[i].first,"SELL","1",to_string(data[i].second)});
+                    order_stats.push_back({data[i].first,"SELL4","1",to_string(data[i].second)});
                     hold_quantity--;
                     trades.pop_back();
-                    trades.insert(trades.begin(),{i,-1});
+                    //trades.insert(trades.begin(),{i,-1});
                 }
-                else if(trades[-1].second==-1 && hold_quantity<x){
+                else if(trades.back().second==-1 && hold_quantity<x){
                     cash_in_hand-=data[i].second;
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
-                    order_stats.push_back({data[i].first,"BUY","1",to_string(data[i].second)});
+                    order_stats.push_back({data[i].first,"BUY4","1",to_string(data[i].second)});
                     hold_quantity++;
                     trades.pop_back();
-                    trades.insert(trades.begin(),{i,1});
+                    //trades.insert(trades.begin(),{i,1});
                 }
                 else{
                     daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
