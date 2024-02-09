@@ -67,7 +67,6 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
         er_den += abs(data[i].second-data[i-1].second);
     }
     for(int i = n-1;i<row_count;i++){
-    	cout<<i<<endl;
         if(i==n-1){
            er_num = data[i].second - data[i-n+1].second;
            eratio = er_num/er_den;
@@ -75,6 +74,7 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
         }
         else{
             er_den -= abs(data[i-n+1].second-data[i-n].second);
+            er_den += abs(data[i].second-data[i-1].second);
             er_num = data[i].second - data[i-n+1].second;
             eratio = er_num/er_den;
             db temp = (2*eratio)/(1+c2);
