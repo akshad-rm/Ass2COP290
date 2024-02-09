@@ -66,7 +66,6 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
     for(int i=1;i<n;i++){
         er_den += abs(data[i].second-data[i-1].second);
     }
-    cout<<"hi1"<<endl;
     for(int i = n-1;i<row_count;i++){
     	cout<<i<<endl;
         if(i==n-1){
@@ -82,9 +81,7 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
             sf = ((1-c1)*sf) + (c1*((temp-1)/(temp+1)));
             ama  = ((1-sf)*ama) + (sf*data[i].second); 
         }
-        cout<<"hi2"<<endl;
         if((100*(data[i].second-ama))>= (100+p)*ama && hold_quantity<x){
-        	cout<<"in1"<<endl;
             if(trades.size()>0 && i-trades[-1].first>=max_hold_days){
                 if(trades[-1].second==1){
                     trades.pop_back();
@@ -101,7 +98,6 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
                 }
             }
             else{
-            	cout<<"hey"<<endl;
                 int j = trades.size()-1;
                 while(trades.size()>0 && trades[j].second==1 && j>=0){
                     j-=1;
@@ -125,7 +121,6 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
         }
         
         else if((100*(ama-data[i].second))>= (100+p)*ama && hold_quantity>(-1*x)){
-        	cout<<"in2"<<endl;
             if(trades.size()>0 && i-trades[-1].first>=max_hold_days){
                 if(trades[-1].second==-1){
                     trades.pop_back();
@@ -164,7 +159,6 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
             }    
         }
         else{
-        	cout<<"in3"<<endl;
             if(trades.size()>0 && i-trades[-1].first>=max_hold_days){
                 if(trades[-1].second==1 && hold_quantity>(-1*x)){
                     cash_in_hand+=data[i].second;
@@ -196,7 +190,6 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
         
         
     }
-    cout<<"hithere"<<endl;
     if(hold_quantity>0){
         cash_in_hand += data[row_count-1].second*hold_quantity;
         hold_quantity = 0;
@@ -255,9 +248,7 @@ int main(int argc, const char * argv[]) {
     vector<pair<string,string>>daily_cashflow;
     vector<vector<string>>order_stats;
     get_data(data);
-    cout<<"hi"<<endl;
     solve(n,x,p,c1,c2,max_hold_days,data,daily_cashflow,order_stats);
-    cout<<"end"<<endl;
     write_data(daily_cashflow,order_stats);
     
     
