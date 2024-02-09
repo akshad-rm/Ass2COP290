@@ -9,8 +9,8 @@ startdate=input()
 enddate= input()
 
 format_str = '%d/%m/%Y' # The format
-startdate = datetime.datetime.strptime(startdate,format_str)
-enddate = datetime.datetime.strptime(enddate,format_str)
+startdate = datetime.strptime(startdate,format_str)
+enddate = datetime.strptime(enddate,format_str)
 startdate_new = startdate.replace(year=startdate.year-3)
 
 df = stock_df(symbol=sym,from_date=startdate_new,to_date=enddate,series="EQ")
