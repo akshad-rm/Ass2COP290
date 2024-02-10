@@ -67,6 +67,7 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
         er_den += abs(data[i].second-data[i-1].second);
     }
     for(int i = n-1;i<row_count;i++){
+    	
         if(i==n-1){
            er_num = data[i].second - data[i-n+1].second;
            eratio = er_num/er_den;
@@ -81,7 +82,8 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
             sf = ((1-c1)*sf) + (c1*((temp-1)/(temp+1)));
             ama  = ((1-sf)*ama) + (sf*data[i].second); 
         }
-        if((100*(data[i].second-ama))>= (100+p)*ama && hold_quantity<x){
+        cout<<i<<" "<<data[i].second<<" "<<eratio<<" "<<sf<<" "<<ama<<endl;
+        if((100*(data[i].second))>= (100+p)*ama && hold_quantity<x){
             if(trades.size()>0 && i-trades.back().first>=max_hold_days){
                 if(trades.back().second==1){
                     trades.pop_back();
@@ -120,7 +122,7 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
             }    
         }
         
-        else if((100*(ama-data[i].second))>= (100+p)*ama && hold_quantity>(-1*x)){
+        else if((100*(data[i].second))<= (100-p)*ama && hold_quantity>(-1*x)){
             if(trades.size()>0 && i-trades.back().first>=max_hold_days){
                 if(trades.back().second==-1){
                     trades.pop_back();
@@ -242,7 +244,7 @@ int main(int argc, const char * argv[]) {
     int x = 4;
     int p = 5;
     int max_hold_days = 15;
-    db c1= 2;
+    db c1= 0.1;
     db c2 = 0.2;
     vector<pair<string,db>>data;
     vector<pair<string,string>>daily_cashflow;
