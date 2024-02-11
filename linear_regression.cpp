@@ -278,11 +278,11 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
 }
 
 
-int main(int argc, const char * argv[]) {
+int main(int argc, char * argv[]) {
     // insert code here...
-    string symbol = "SBIN";
-    int p = 2;
-    int x = 3;
+    string symbol = argv[1];
+    int p = stoi(argv[2]);
+    int x = stoi(argv[3]);
     vector<pair<string,vector<db>>>data;
     vector<pair<string,string>>daily_cashflow;
     vector<vector<string>>order_stats;

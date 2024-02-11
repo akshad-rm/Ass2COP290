@@ -3,13 +3,14 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <bits/stdc++.h>
 #define db double
 
 using namespace std;
 
 
 void get_data(vector<pair<string,db>>&data){
-    ifstream datafile("data.csv");
+    ifstream datafile("data_dma.csv");
     string line ;
     
     if(!datafile.is_open()){
@@ -147,10 +148,10 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
 
 int main(int argc, const char * argv[]) {
     // insert code here...
-    string symbol = "SBIN";
-    int n = 50;
-    int x = 3;
-    int p = 2;
+    string symbol = argv[1];
+    int n = stoi(argv[2]);
+    int x = stoi(argv[3]);
+    int p = stoi(argv[4]);
     vector<pair<string,db>>data;
     vector<pair<string,string>>daily_cashflow;
     vector<vector<string>>order_stats;
