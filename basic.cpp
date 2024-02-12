@@ -9,7 +9,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <bits/stdc++.h>
+#include <vector>
+#include <algorithm>
 #define db double
 
 using namespace std;

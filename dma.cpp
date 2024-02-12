@@ -3,7 +3,8 @@
 #include <string>
 #include <sstream>
 #include <cmath>
-#include <bits/stdc++.h>
+#include <vector>
+#include <algorithm>
 #define db double
 
 using namespace std;
