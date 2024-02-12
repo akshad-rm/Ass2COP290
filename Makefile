@@ -18,6 +18,11 @@ ifeq ($(strategy),DMA)
 	./a.out $(symbol) $(n) $(x) $(p)
 	rm data_dma.csv
 endif
+ifeq ($(strategy),PAIRS)
+	python3 data_basic_for_PAIRS.py $(symbol1) $(symbol2)  $(n) $(start_date) $(end_date)
+	g++ PAIRS.cpp
+	./a.out $(symbol1) $(symbol2) $(x) $(n) $(threshold) $(start_date) $(end_date)
+endif
 ifeq ($(strategy),DMA++)
 	python3 data_dma++.py $(symbol) $(n) $(start_date) $(end_date)
 	g++ dma++.cpp
