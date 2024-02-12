@@ -8,6 +8,7 @@ sym1=sys.argv[1]
 sym2=sys.argv[2]
 
 n=int(sys.argv[3])
+n = 3*n; 
 
 startdate=sys.argv[4]
 enddate= sys.argv[5]
