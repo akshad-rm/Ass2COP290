@@ -9,11 +9,41 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
 #include <map>
 #define db double
 
+
 using namespace std;
 
+
+string convert_to_d(string date){
+    string res = "dd/mm/yyyy";
+    res[0] = date[8];
+    res[1] = date[9];
+    res[3] = date[5];
+    res[4] = date[6];
+    res[6] = date[0];
+    res[7] = date[1];
+    res[8] = date[2];
+    res[9] = date[3];
+    return res;
+}
+
+string convert_to_y(string date){
+    string res = "yyyy-mm-dd";
+    res[0] = date[6];
+    res[1] = date[7];
+    res[2] = date[8];
+    res[3] = date[9];
+    res[5] = date[3];
+    res[6] = date[4];
+    res[8] = date[0];
+    res[9] = date[1];
+    return res;
+}
 
 void get_data(vector<pair<string,db>>&data_1,vector<pair<string,db>>&data_2,string symbol_1,string symbol_2){
     ifstream datafile(symbol_1+".csv");
@@ -48,7 +78,7 @@ void get_data(vector<pair<string,db>>&data_1,vector<pair<string,db>>&data_2,stri
     
     int row_count = int(raw_data.size());
     for(int i = 0;i<row_count;i++){
-        string date = raw_data[i][0];
+        string date = convert_to_y(raw_data[i][0]);
         db close_price = stod(raw_data[i][1]);
         data_1.push_back({date,close_price});
     }
@@ -107,6 +137,9 @@ bool is_date_earlier_or_today(string d1,string d2){
     
 }
 
+
+
+
 void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start_date,string end_date,vector<pair<string,db>>&data_1,vector<pair<string,db>>&data_2,vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats_1,vector<vector<string>>&order_stats_2){
     
     
@@ -116,7 +149,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
     }
     
     int last_day = first_day;
-    while(is_date_earlier_or_today(data_1[last_day].first, end_date)){
+    while(last_day<data_1.size() && is_date_earlier_or_today(data_1[last_day].first, end_date)){
         last_day++;
     }
     last_day--;
@@ -155,7 +188,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
         
         z_score = (spread[curr_day] - rolling_mean[curr_day])/rolling_std;
         
-        if(z_score>threshold && hold_quantity_1>(-1*x) && hold_quantity_2<(x)){
+        if(z_score>=threshold && hold_quantity_1>(-1*x) && hold_quantity_2<(x)){
             cash_in_hand+=data_1[curr_day].second;
             
             order_stats_1.push_back({data_1[curr_day].first,"SELL","1",to_string(data_1[curr_day].second)});
@@ -169,7 +202,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
             daily_cashflow.push_back({data_1[curr_day].first,to_string(cash_in_hand)});
         }
         
-        else if(z_score<(-1*threshold) && hold_quantity_2>(-1*x) && hold_quantity_1<(x)){
+        else if(z_score<=(-1*threshold) && hold_quantity_2>(-1*x) && hold_quantity_1<(x)){
             cash_in_hand+=data_2[curr_day].second;
             
             order_stats_2.push_back({data_2[curr_day].first,"SELL","1",to_string(data_2[curr_day].second)});
@@ -225,7 +258,15 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
 
 
 void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats_1,vector<vector<string>>&order_stats_2){
-    
+    for(auto &x:daily_cashflow){
+    	x.first = convert_to_d(x.first);
+    }
+    for(auto &x:order_stats_2){
+    	x[0] = convert_to_d(x[0]);
+    }
+    for(auto &x:order_stats_1){
+    	x[0] = convert_to_d(x[0]);
+    }
     ofstream dc_file("daily_cashflow.csv");
     dc_file<<"Date,Cashflow"<<endl;
     for(auto x:daily_cashflow){
@@ -250,7 +291,7 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
     
     
     ofstream os_file_2("order_statistics_2.csv");
-    cout<<order_stats_2.size()<<" "<<order_stats_1.size()<<endl;
+    
     os_file_2<<"Date,Order_dir,Quantity,Price"<<endl;
     for(auto row:order_stats_2){
         string temp;
@@ -269,15 +310,17 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
 
 
 
-int main(int argc, const char * argv[]) {
+int main(int argc,const char* argv[]) {
     // insert code here...
-    string symbol_1 = "SBIN";
-    string symbol_2 = "ADANIENT";
-    int n = 5;
-    int x = 3;
-    db threshold  = 1.5;
-    string start_date = "2023-05-05";
-    string end_date = "2023-10-10";
+    string symbol_1 = argv[1];
+    string symbol_2 = argv[2];
+    int n = stoi(argv[4]);
+    int x = stoi(argv[3]);
+    db threshold  = stod(argv[5]);
+    string start_date = argv[6];
+    string end_date = argv[7];
+    start_date = convert_to_y(start_date);
+    end_date = convert_to_y(end_date);
     vector<pair<string,db>>data_1;
     vector<pair<string,db>>data_2;
     vector<pair<string,string>>daily_cashflow;
@@ -285,11 +328,11 @@ int main(int argc, const char * argv[]) {
     vector<vector<string>>order_stats_2;
     get_data(data_1,data_2,symbol_1,symbol_2);
     solve(symbol_1,symbol_2,x,n,threshold,start_date,end_date, data_1,data_2,daily_cashflow,order_stats_1,order_stats_2);
-    
     write_data(daily_cashflow, order_stats_1, order_stats_2);
     
     
     
     return 0;
 }
+
 

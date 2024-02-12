@@ -35,8 +35,8 @@ ifeq ($(strategy),ADX)
 	g++ ADX.cpp
 	./a.out $(symbol) $(x) $(n) $(adx_threshold) $(start_date) $(end_date)
 endif
-ifeq ($(strategy),BEST_OF_ALL)
-	python3 best_all_data.py $(symbol) $(start_date) $(end_date)
-	g++ -fopenmp best_of_all.cpp
-	./a.out $(symbol)
+ifeq ($(strategy),PAIRS)
+	python3 data_basic_for_PAIRS.py $(symbol1) $(symbol2)  $(n) $(start_date) $(end_date)
+	g++ PAIRS.cpp
+	./a.out $(symbol1) $(symbol2) $(x) $(n) $(threshold) $(start_date) $(end_date)
 endif
