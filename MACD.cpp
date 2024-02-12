@@ -69,31 +69,7 @@ void get_data(vector<pair<string,db>>&data){
 }
 
 
-db EWM (int current_day,vector<pair<string,db>>&data,int num_days){
-    int curr = current_day - num_days;
-    db alpha = 2/(num_days+1);
-    db ewm = data[curr].second;
-    curr++;
-    while(curr<=current_day){
-        ewm = alpha*(data[curr].second - ewm) + ewm;
-        curr++;
-    }
-    return ewm;
-    
-}
 
-db signal(int current_day,map<int,db>&macd_map,int num_days){
-    int curr = current_day - num_days;
-    db alpha = 2/(num_days+1);
-    db ewm = 0;
-    curr++;
-    while(curr<=current_day){
-        ewm = alpha*(macd_map[curr] - ewm) + ewm;
-        curr++;
-    }
-    return ewm;
-    
-}
 
 
 void solve(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats,string start_date,string end_date){
@@ -110,23 +86,56 @@ void solve(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_
     }
     last_day--;
     map<int,db>macd;
-    for(int curr = first_day-9;curr<=last_day;curr++){
-        db short_ewm = EWM(curr, data, 12);
-        db long_ewm = EWM(curr,data,26);
-        db curr_macd = short_ewm - long_ewm;
+    map<int,db>short_ewm;
+    db lookback_period = 12;
+    db alpha = (2/lookback_period+1);
+    
+    db ewm = data[first_day].second;
+    short_ewm[first_day] = ewm;
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*(data[curr].second-ewm)+ewm;
+        short_ewm[curr] = ewm;
+    }
+    map<int,db>long_ewm;
+    lookback_period = 26;
+    alpha = db(2/lookback_period+1);
+    
+    ewm =data[first_day].second;
+    long_ewm[first_day] = ewm;
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*(data[curr].second-ewm)+ewm;
+        long_ewm[curr] = ewm;
+    }
+    for(int curr = first_day;curr<=last_day;curr++){
+        
+        db curr_macd = short_ewm[curr] - long_ewm[curr];
         macd[curr] = curr_macd;
     }
+    
+    map<int,db>signal;
+    lookback_period = 9;
+    alpha = (2/lookback_period+1);
+    
+    ewm = macd[first_day];
+    signal[first_day] = ewm;
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*(macd[curr]-ewm)+ewm;
+        signal[curr] = ewm;
+    }
+    
     db cash_in_hand = 0;
     int hold_quantity = 0;
     for(int current_day = first_day;current_day<=last_day;current_day++){
-        db curr_signal = signal(current_day, macd, 9);
+        ;
+        db curr_signal = signal[current_day];
         db curr_macd = macd[current_day];
-        
+        //cout<<curr_signal<<endl;
         if(curr_macd>curr_signal && hold_quantity<x){
             cash_in_hand-=data[current_day].second;
             daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
             order_stats.push_back({data[current_day].first,"BUY","1",to_string(data[current_day].second)});
             hold_quantity++;
+            
         }
         else if(curr_macd<curr_signal && hold_quantity>(-1*x)){
             cash_in_hand+=data[current_day].second;
