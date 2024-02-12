@@ -124,7 +124,7 @@ void solve(int x,int n,db oversold_threshold,db overbought_threshold,string star
         }
     }
     db cash_in_hand = 0;
-    int hold_quantity = 0;
+    db hold_quantity = 0;
     db avg_gain = gain_window/n;
     db avg_loss = loss_window/n;
     db RS;
@@ -136,13 +136,13 @@ void solve(int x,int n,db oversold_threshold,db overbought_threshold,string star
         RS = avg_gain/avg_loss;
         RSI = 100 - (100/(1+RS));
     }
-    if(RSI<oversold_threshold && hold_quantity<x){
+    if(RSI<=oversold_threshold && hold_quantity<x){
         cash_in_hand-=data[first_day].second;
         daily_cashflow.push_back({data[first_day].first,to_string(cash_in_hand)});
         order_stats.push_back({data[first_day].first,"BUY","1",to_string(data[first_day].second)});
         hold_quantity++;
     }
-    else if(RSI>overbought_threshold && hold_quantity>(-1*x)){
+    else if(RSI>=overbought_threshold && hold_quantity>(-1*x)){
         cash_in_hand+=data[first_day].second;
         daily_cashflow.push_back({data[first_day].first,to_string(cash_in_hand)});
         order_stats.push_back({data[first_day].first,"SELL","1",to_string(data[first_day].second)});
@@ -153,8 +153,8 @@ void solve(int x,int n,db oversold_threshold,db overbought_threshold,string star
     }
     
     for(int current_day = first_day+1;current_day<=last_day;current_day++){
-        db window_add = data[current_day].second;
-        db window_remove = data[current_day-n].second;
+        db window_add = gain_loss[current_day];
+        db window_remove = gain_loss[current_day-n];
         
         if(window_add>0){
             gain_window+=window_add;
@@ -226,7 +226,7 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
     for(auto &x:order_stats){
     	x[0] = convert_to_d(x[0]);
     }
-    ofstream dc_file("daily_cashflow.csv");
+    ofstream dc_file("daily cashflow.csv");
     dc_file<<"Date,Cashflow"<<endl;
     for(auto x:daily_cashflow){
         dc_file<<x.first<<","<<x.second<<endl;
