@@ -123,7 +123,7 @@ void solve(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_
     map<int,db>macd;
     map<int,db>short_ewm;
     db lookback_period = 12;
-    db alpha = (2/lookback_period+1);
+    db alpha = (2/(lookback_period+1));
     
     db ewm = data[first_day].second;
     short_ewm[first_day] = ewm;
@@ -133,7 +133,7 @@ void solve(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_
     }
     map<int,db>long_ewm;
     lookback_period = 26;
-    alpha = db(2/lookback_period+1);
+    alpha = (2/(lookback_period+1));
     
     ewm =data[first_day].second;
     long_ewm[first_day] = ewm;
@@ -149,7 +149,7 @@ void solve(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_
     
     map<int,db>signal;
     lookback_period = 9;
-    alpha = (2/lookback_period+1);
+    alpha = (2/(lookback_period+1));
     
     ewm = macd[first_day];
     signal[first_day] = ewm;
