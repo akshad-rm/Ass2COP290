@@ -15,3 +15,8 @@ ifeq ($(strategy),DMA)
 	g++ dma.cpp
 	./a.out $(symbol) $(n) $(x) $(p)
 endif
+ifeq ($(strategy),DMA++)
+	python3 data_dma++.py $(symbol) $(n) $(start_date) $(end_date)
+	g++ dma++.cpp
+	./a.out $(symbol) $(n) $(x) $(p) $(max_hold_days) $(c1) $(c2)
+endif

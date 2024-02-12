@@ -23,5 +23,6 @@ while len(ind)==0:
   startdate = startdate + timedelta(days=1)
   ind = df_copy.index[df['DATE']==startdate]
 df= df[:ind[0]+n+1]  
+df['DATE'] = df['DATE'].dt.strftime('%d/%m/%Y')
 
 df.to_csv("data_basic.csv",index=False)

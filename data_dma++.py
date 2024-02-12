@@ -5,7 +5,7 @@ import sys
 from datetime import date,timedelta,datetime
 
 sym=sys.argv[1]
-n=int(sys.argv[2])-1
+n=int(sys.argv[2])
 startdate=sys.argv[3]
 enddate= sys.argv[4]
 
@@ -24,4 +24,4 @@ while len(ind)==0:
   ind = df_copy.index[df['DATE']==startdate]
 df= df[:ind[0]+n+1]  
 df['DATE'] = df['DATE'].dt.strftime('%d/%m/%Y')
-df.to_csv("data_dma.csv",index=False)
+df.to_csv("data_dma++.csv",index=False)
