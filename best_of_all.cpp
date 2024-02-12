@@ -678,7 +678,514 @@ db solve_lr(int p,int x,vector<pair<string,vector<db>>>&data,vector<pair<string,
     return cash_in_hand; 
 }
 
+bool is_date_earlier(string d1,string d2){
+    return d1<d2;
+    
+}
 
+bool is_date_earlier_or_today(string d1,string d2){
+    return d1<=d2;
+    
+}
+
+string convert_to_d(string date){
+    string res = "dd/mm/yyyy";
+    res[0] = date[8];
+    res[1] = date[9];
+    res[3] = date[5];
+    res[4] = date[6];
+    res[6] = date[0];
+    res[7] = date[1];
+    res[8] = date[2];
+    res[9] = date[3];
+    return res;
+}
+
+string convert_to_y(string date){
+    string res = "yyyy-mm-dd";
+    res[0] = date[6];
+    res[1] = date[7];
+    res[2] = date[8];
+    res[3] = date[9];
+    res[5] = date[3];
+    res[6] = date[4];
+    res[8] = date[0];
+    res[9] = date[1];
+    return res;
+}
+
+void get_data_macd(vector<pair<string,db>>&data){
+    ifstream datafile("data_macd.csv");
+    string line ;
+    
+    if(!datafile.is_open()){
+        cerr << "could not open the file : data_macd.csv" << endl;
+    }
+    vector<vector<string>>raw_data;
+    int title_flag = 0;
+    
+    while(getline(datafile, line)) {
+        if(title_flag==1){
+            istringstream ss(line);
+            string column;
+            vector<string> row_data;
+
+            while (std::getline(ss, column, ',')) {
+                row_data.push_back(column);
+            }
+
+            raw_data.push_back(row_data);
+        }
+        else{
+            title_flag = 1;
+        }
+        
+    }
+    
+    
+    datafile.close();
+    
+    
+    
+    int row_count = int(raw_data.size());
+    for(int i = 0;i<row_count;i++){
+        string date = convert_to_y(raw_data[i][0]);
+        db close_price = stod(raw_data[i][1]);
+        data.push_back({date,close_price});
+    }
+    reverse(data.begin(),data.end());
+    
+    
+    
+}
+
+
+
+
+
+db solve_macd(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats,string start_date,string end_date){
+    
+   
+    int first_day = 0;
+    while(is_date_earlier(data[first_day].first, start_date)){
+        first_day++;
+        
+    }
+    
+    int last_day = first_day;
+    while(last_day<data.size() && is_date_earlier_or_today(data[last_day].first, end_date)){
+        last_day++;
+        
+    }
+    last_day--;
+    
+    
+    map<int,db>macd;
+    map<int,db>short_ewm;
+    db lookback_period = 12;
+    db alpha = (2/(lookback_period+1));
+    
+    db ewm = data[first_day].second;
+    short_ewm[first_day] = ewm;
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*(data[curr].second-ewm)+ewm;
+        short_ewm[curr] = ewm;
+    }
+    map<int,db>long_ewm;
+    lookback_period = 26;
+    alpha = (2/(lookback_period+1));
+    
+    ewm =data[first_day].second;
+    long_ewm[first_day] = ewm;
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*(data[curr].second-ewm)+ewm;
+        long_ewm[curr] = ewm;
+    }
+    for(int curr = first_day;curr<=last_day;curr++){
+        
+        db curr_macd = short_ewm[curr] - long_ewm[curr];
+        macd[curr] = curr_macd;
+    }
+    
+    map<int,db>signal;
+    lookback_period = 9;
+    alpha = (2/(lookback_period+1));
+    
+    ewm = macd[first_day];
+    signal[first_day] = ewm;
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*(macd[curr]-ewm)+ewm;
+        signal[curr] = ewm;
+    }
+    
+    db cash_in_hand = 0;
+    int hold_quantity = 0;
+    for(int current_day = first_day;current_day<=last_day;current_day++){
+        
+        db curr_signal = signal[current_day];
+        db curr_macd = macd[current_day];
+        //cout<<curr_signal<<endl;
+        if(curr_macd>curr_signal && hold_quantity<x){
+            cash_in_hand-=data[current_day].second;
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            order_stats.push_back({convert_to_d(data[current_day].first),"BUY","1",to_string(data[current_day].second)});
+            hold_quantity++;
+            
+            
+        }
+        else if(curr_macd<curr_signal && hold_quantity>(-1*x)){
+            cash_in_hand+=data[current_day].second;
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            order_stats.push_back({convert_to_d(data[current_day].first),"SELL","1",to_string(data[current_day].second)});
+            hold_quantity--;
+            
+        }
+        else{
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            
+        }
+    }
+    
+    if(hold_quantity>0){
+        cash_in_hand += data[last_day].second*hold_quantity;
+        hold_quantity = 0;
+        
+    }
+    else if(hold_quantity<0){
+        cash_in_hand -= ((data[last_day].second)*abs(hold_quantity));
+        hold_quantity = 0;
+    }
+    return cash_in_hand;
+    
+}
+
+void get_data_rsi(vector<pair<string,db>>&data){
+    ifstream datafile("data_basic.csv");
+    string line ;
+    
+    if(!datafile.is_open()){
+        cerr << "could not open the file : data.csv" << endl;
+    }
+    vector<vector<string>>raw_data;
+    int title_flag = 0;
+    
+    while(getline(datafile, line)) {
+        if(title_flag==1){
+            istringstream ss(line);
+            string column;
+            vector<string> row_data;
+
+            while (std::getline(ss, column, ',')) {
+                row_data.push_back(column);
+            }
+
+            raw_data.push_back(row_data);
+        }
+        else{
+            title_flag = 1;
+        }
+        
+    }
+    datafile.close();
+    
+    
+    
+    int row_count = int(raw_data.size());
+    for(int i = 0;i<row_count;i++){
+        string date = convert_to_y(raw_data[i][0]);
+        db close_price = stod(raw_data[i][1]);
+        data.push_back({date,close_price});
+    }
+    reverse(data.begin(),data.end());
+    
+}
+
+db solve_rsi(int x,int n,db oversold_threshold,db overbought_threshold,string start_date,string end_date,vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats,vector<pair<string,db>>&data){
+    
+    int first_day = 0;
+    while(is_date_earlier(data[first_day].first, start_date)){
+        first_day++;
+    }
+    
+    int last_day = first_day;
+    while(last_day<data.size() && is_date_earlier_or_today(data[last_day].first, end_date)){
+        last_day++;
+    }
+    last_day--;
+    
+    map<int,db>gain_loss;
+    for(int curr = first_day - n +1;curr<=last_day;curr++){
+        db diff = data[curr].second - data[curr-1].second;
+        gain_loss[curr] = diff;
+    }
+    db gain_window = 0;
+    db loss_window = 0;
+    for(int curr = first_day-n+1;curr<=first_day;curr++){
+        if(gain_loss[curr]>0){
+            gain_window+=gain_loss[curr];
+        }
+        else{
+            loss_window+=abs(gain_loss[curr]);
+        }
+    }
+    db cash_in_hand = 0;
+    db hold_quantity = 0;
+    db avg_gain = gain_window/n;
+    db avg_loss = loss_window/n;
+    db RS;
+    db RSI;
+    if(avg_loss==0){
+        RSI = 100;
+    }
+    else{
+        RS = avg_gain/avg_loss;
+        RSI = 100 - (100/(1+RS));
+    }
+    if(RSI<=oversold_threshold && hold_quantity<x){
+        cash_in_hand-=data[first_day].second;
+        daily_cashflow.push_back({convert_to_d(data[first_day].first),to_string(cash_in_hand)});
+        order_stats.push_back({convert_to_d(data[first_day].first),"BUY","1",to_string(data[first_day].second)});
+        hold_quantity++;
+    }
+    else if(RSI>=overbought_threshold && hold_quantity>(-1*x)){
+        cash_in_hand+=data[first_day].second;
+        daily_cashflow.push_back({convert_to_d(data[first_day].first),to_string(cash_in_hand)});
+        order_stats.push_back({convert_to_d(data[first_day].first),"SELL","1",to_string(data[first_day].second)});
+        hold_quantity--;
+    }
+    else{
+        daily_cashflow.push_back({convert_to_d(data[first_day].first),to_string(cash_in_hand)});
+    }
+    
+    for(int current_day = first_day+1;current_day<=last_day;current_day++){
+        db window_add = gain_loss[current_day];
+        db window_remove = gain_loss[current_day-n];
+        
+        if(window_add>0){
+            gain_window+=window_add;
+        }
+        else if(window_add<0){
+            loss_window += abs(window_add);
+        }
+        
+        if(window_remove>0){
+            gain_window-=window_remove;
+        }
+        else if(window_remove<0){
+            loss_window-=abs(window_remove);
+        }
+        
+        db avg_gain = gain_window/n;
+        db avg_loss = loss_window/n;
+        db RS;
+        db RSI;
+        if(avg_loss==0){
+            RSI = 100;
+        }
+        else{
+            RS = avg_gain/avg_loss;
+            RSI = 100 - (100/(1+RS));
+        }
+        if(RSI<oversold_threshold && hold_quantity<x){
+            cash_in_hand-=data[current_day].second;
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            order_stats.push_back({convert_to_d(data[current_day].first),"BUY","1",to_string(data[current_day].second)});
+            hold_quantity++;
+        }
+        else if(RSI>overbought_threshold && hold_quantity>(-1*x)){
+            cash_in_hand+=data[current_day].second;
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            order_stats.push_back({convert_to_d(data[current_day].first),"SELL","1",to_string(data[current_day].second)});
+            hold_quantity--;
+        }
+        else{
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+        }
+        
+    }
+    
+    if(hold_quantity>0){
+        cash_in_hand += data[last_day].second*hold_quantity;
+        hold_quantity = 0;
+        
+    }
+    else if(hold_quantity<0){
+        cash_in_hand -= ((data[last_day].second)*abs(hold_quantity));
+        hold_quantity = 0;
+    }
+    return cash_in_hand;
+    
+}
+
+void get_data_adx(vector<pair<string,vector<db>>>&data){
+    ifstream datafile("data_basic.csv");
+    string line ;
+    
+    if(!datafile.is_open()){
+        cerr << "could not open the file : data.csv" << endl;
+    }
+    vector<vector<string>>raw_data;
+    int title_flag = 0;
+    
+    while(getline(datafile, line)) {
+        if(title_flag==1){
+            istringstream ss(line);
+            string column;
+            vector<string> row_data;
+
+            while (std::getline(ss, column, ',')) {
+                row_data.push_back(column);
+            }
+
+            raw_data.push_back(row_data);
+        }
+        else{
+            title_flag = 1;
+        }
+        
+    }
+    datafile.close();
+    
+    
+    
+    int row_count = int(raw_data.size());
+    for(int i = 0;i<row_count;i++){
+        string date = convert_to_y(raw_data[i][0]);
+        db close_price = stod(raw_data[i][1]);
+        db high = stod(raw_data[i][2]);
+        db low = stod(raw_data[i][3]);
+        db prev_close = stod(raw_data[i][4]);
+        data.push_back({date,{close_price,high,low,prev_close}});
+    }
+    reverse(data.begin(),data.end());
+    
+}
+
+db solve_adx(int x,int n, db adx_threshold,string start_date,string end_date,vector<pair<string,vector<db>>> &data,vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats){
+    
+    int first_day = 0;
+    while(is_date_earlier(data[first_day].first, start_date)){
+        first_day++;
+    }
+    
+    int last_day = first_day;
+    while( last_day<data.size() && is_date_earlier_or_today(data[last_day].first, end_date)){
+        last_day++;
+    }
+    last_day--;
+    
+    map<int,db>true_range;
+    for(int curr = first_day - n+1;curr<=last_day;curr++){
+        db maximum = max(data[curr].second[1] - data[curr].second[2],max(data[curr].second[1] - data[curr].second[3],data[curr].second[2] - data[curr].second[3]));
+        true_range[curr] = maximum;
+    }
+    map<int,db>ATR;
+    map<int,db>DMp;
+    map<int,db>DMm;
+    for(int curr = first_day - n+1;curr<=last_day;curr++){
+        if(data[curr].second[1] - data[curr-1].second[1]>0){
+            DMp[curr] = data[curr].second[1] - data[curr-1].second[1];
+        }
+        else{
+            DMp[curr] = 0;
+        }
+        
+        if(data[curr].second[2] - data[curr-1].second[2]>0){
+            DMm[curr] = data[curr].second[2] - data[curr-1].second[2];
+        }
+        else{
+            DMm[curr] = 0;
+        }
+        
+        
+    }
+   
+    ATR[first_day] = true_range[first_day];
+    db look_back_period = n;
+    db alpha = 2/(look_back_period+1);
+    
+    
+    db ewm = ATR[first_day];
+    
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*(true_range[curr] - ewm) + ewm;
+        
+        ATR[curr] = ewm;
+        
+    }
+    
+    map<int,db>DIp;
+    ewm = DMp[first_day]/ATR[first_day];
+    DIp[first_day] = ewm;
+    
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*((DMp[curr]/ATR[curr])-ewm)+ewm;
+        DIp[curr]=  ewm;
+        
+        
+    }
+    
+    map<int,db>DIm;
+    ewm = DMm[first_day]/ATR[first_day];
+    
+    DIm[first_day] = ewm;
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*((DMm[curr]/ATR[curr])-ewm)+ewm;
+        DIm[curr]=  ewm;
+        
+    }
+    map<int,db>DX;
+    for(int curr = first_day;curr<=last_day;curr++){
+        db dx;
+        if(DIp[curr]+DIm[curr]==0){
+            dx = 0;
+        }
+        else{
+            dx = ((DIp[curr]-DIm[curr])/(DIp[curr]+DIm[curr]))*100;
+        }
+        DX[curr] = dx;
+        
+    }
+    map<int,db>ADX;
+    ewm = DX[first_day];
+    ADX[first_day] = ewm;
+    for(int curr = first_day+1;curr<=last_day;curr++){
+        ewm = alpha*((DX[curr])-ewm)+ewm;
+        ADX[curr] = ewm;
+    }
+    db cash_in_hand = 0;
+    int hold_quantity = 0;
+    for(int current_day = first_day;current_day<=last_day;current_day++){
+        db adx = ADX[current_day];
+        
+        if(adx>=adx_threshold && hold_quantity<x && DX[current_day]!=0){
+            cash_in_hand-=data[current_day].second[0];
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            order_stats.push_back({convert_to_d(data[current_day].first),"BUY","1",to_string(data[current_day].second[0])});
+            hold_quantity++;
+        }
+        else if(adx<=adx_threshold && hold_quantity>(-1*x) && DX[current_day]!=0){
+            cash_in_hand+=data[current_day].second[0];
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            order_stats.push_back({convert_to_d(data[current_day].first),"SELL","1",to_string(data[current_day].second[0])});
+            hold_quantity--;
+        }
+        else{
+            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+        }
+    }
+    if(hold_quantity>0){
+        cash_in_hand += data[last_day].second[1]*hold_quantity;
+        hold_quantity = 0;
+            
+    }
+    else if(hold_quantity<0){
+        cash_in_hand -= ((data[last_day].second[1])*abs(hold_quantity));
+        hold_quantity = 0;
+    }
+    return cash_in_hand;
+}
+    
 
 void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats){
     
@@ -710,13 +1217,16 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
 int main(int argc, const char * argv[]) {
     // insert code here...
     string symbol = argv[1];
+    string start_date = argv[2];
+    string end_date = argv[3];
     map<string,vector<pair<string,db>>> data;
     map<string,vector<pair<string,string>>> daily_cashflow;
     map<string,vector<vector<string>>> order_stats;
     map<string,db> pnl;
     vector<pair<string,vector<db>>> train_data;
     vector<pair<string,vector<db>>> lr_data;
-    omp_set_num_threads(4);
+    vector<pair<string,vector<db>>> adx_data;
+    omp_set_num_threads(7);
     #pragma omp parallel
     {
        int thread_num = omp_get_thread_num();
@@ -768,6 +1278,48 @@ int main(int argc, const char * argv[]) {
 		        db temp_lr = solve_lr(2,5,lr_data,daily_cashflow["lr"],order_stats["lr"], betas);
 		        pnl["lr"] = temp_lr;
 		        cout<<"lr"<<temp_lr<<endl;
+		        }
+		   	}           
+       }
+       else if (thread_num==4){
+		   	#pragma omp task
+		   	{
+		   		#pragma omp critical
+		   		{
+		   		get_data_macd(data["macd"]);
+                string sd = convert_to_y(start_date);
+                string ed = convert_to_y(end_date);
+		        db temp4 = solve_macd(5,data["macd"],daily_cashflow["macd"],order_stats["macd"],sd,ed);
+		        pnl["macd"] = temp4;
+		        cout<<"macd"<<temp4<<endl;
+		        }
+		   	}           
+       }
+       else if (thread_num==5){
+		   	#pragma omp task
+		   	{
+		   		#pragma omp critical
+		   		{
+		   		get_data_rsi(data["rsi"]);
+                string sd = convert_to_y(start_date);
+                string ed = convert_to_y(end_date);
+		        db temp5 = solve_rsi(5,14,30,70,sd,ed,daily_cashflow["rsi"],order_stats["rsi"],data["rsi"]);
+		        pnl["rsi"] = temp5;
+		        cout<<"rsi"<<temp5<<endl;
+		        }
+		   	}           
+       }
+       else if (thread_num==6){
+		   	#pragma omp task
+		   	{
+		   		#pragma omp critical
+		   		{
+		   		get_data_adx(adx_data);
+                string sd = convert_to_y(start_date);
+                string ed = convert_to_y(end_date);
+		        db temp6 = solve_adx(5,14,25,sd,ed,adx_data,daily_cashflow["adx"],order_stats["adx"]);
+		        pnl["adx"] = temp6;
+		        cout<<"adx"<<temp6<<endl;
 		        }
 		   	}           
        }
