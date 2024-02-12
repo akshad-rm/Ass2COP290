@@ -20,3 +20,18 @@ ifeq ($(strategy),DMA++)
 	g++ dma++.cpp
 	./a.out $(symbol) $(n) $(x) $(p) $(max_hold_days) $(c1) $(c2)
 endif
+ifeq ($(strategy),MACD)
+	python3 data_basic.py $(symbol) 10 $(start_date) $(end_date)
+	g++ MACD.cpp
+	./a.out $(symbol) $(x) $(start_date) $(end_date)
+endif
+ifeq ($(strategy),RSI)
+	python3 data_basic.py $(symbol) $(n) $(start_date) $(end_date)
+	g++ RSI.cpp
+	./a.out $(symbol) $(x) $(n) $(oversold_threshold) $(overbought_threshold) $(start_date) $(end_date)
+endif
+ifeq ($(strategy),ADX)
+	python3 data_basic_for_ADX.py $(symbol) $(n) $(start_date) $(end_date)
+	g++ ADX.cpp
+	./a.out $(symbol) $(x) $(n) $(adx_threshold) $(start_date) $(end_date)
+endif

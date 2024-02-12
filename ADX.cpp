@@ -28,8 +28,34 @@ bool is_date_earlier_or_today(string d1,string d2){
     
 }
 
+string convert_to_d(string date){
+    string res = "dd/mm/yyyy";
+    res[0] = date[8];
+    res[1] = date[9];
+    res[3] = date[5];
+    res[4] = date[6];
+    res[6] = date[0];
+    res[7] = date[1];
+    res[8] = date[2];
+    res[9] = date[3];
+    return res;
+}
+
+string convert_to_y(string date){
+    string res = "yyyy-mm-dd";
+    res[0] = date[6];
+    res[1] = date[7];
+    res[2] = date[8];
+    res[3] = date[9];
+    res[5] = date[3];
+    res[6] = date[4];
+    res[8] = date[0];
+    res[9] = date[1];
+    return res;
+}
+
 void get_data(vector<pair<string,vector<db>>>&data){
-    ifstream datafile("data_extended.csv");
+    ifstream datafile("data_basic.csv");
     string line ;
     
     if(!datafile.is_open()){
@@ -61,7 +87,7 @@ void get_data(vector<pair<string,vector<db>>>&data){
     
     int row_count = int(raw_data.size());
     for(int i = 0;i<row_count;i++){
-        string date = raw_data[i][0];
+        string date = convert_to_y(raw_data[i][0]);
         db close_price = stod(raw_data[i][1]);
         db high = stod(raw_data[i][2]);
         db low = stod(raw_data[i][3]);
@@ -84,7 +110,7 @@ void solve(int x,int n, db adx_threshold,string start_date,string end_date,vecto
     }
     
     int last_day = first_day;
-    while(is_date_earlier_or_today(data[last_day].first, end_date)){
+    while( last_day<data.size() && is_date_earlier_or_today(data[last_day].first, end_date)){
         last_day++;
     }
     last_day--;
@@ -214,6 +240,12 @@ void solve(int x,int n, db adx_threshold,string start_date,string end_date,vecto
     
 void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats){
     
+    for(auto &x:daily_cashflow){
+    	x.first = convert_to_d(x.first);
+    }
+    for(auto &x:order_stats){
+    	x[0] = convert_to_d(x[0]);
+    }
     ofstream dc_file("daily cashflow.csv");
     dc_file<<"Date,Cashflow"<<endl;
     for(auto x:daily_cashflow){
@@ -249,6 +281,8 @@ int main(int argc,const char* argv[]){
     int x = stoi(argv[2]);
     string start_date = argv[5];
     string end_date = argv[6];
+    start_date = convert_to_y(start_date);
+    end_date = convert_to_y(end_date);
     db adx_threshold = stod(argv[4]);
     int n = stoi(argv[3]);
     vector<pair<string,string>>daily_cashflow;
