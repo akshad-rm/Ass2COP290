@@ -133,7 +133,7 @@ void solve(int n,int x,vector<pair<string,db>>&data,vector<pair<string,string>>&
 
 void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>>&order_stats){
     
-    ofstream dc_file("daily cashflow.csv");
+    ofstream dc_file("daily_cashflow.csv");
     dc_file<<"Date,Cashflow"<<endl;
     for(auto x:daily_cashflow){
         dc_file<<x.first<<","<<x.second<<endl;
