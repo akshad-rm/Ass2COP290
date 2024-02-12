@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <algorithm>
 #include <map>
 #define db double
 
@@ -243,13 +244,13 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
 
 
 
-int main(){
-    string symbol = "SBIN";
-    int x = 4;
-    string start_date = "2023-01-05";
-    string end_date = "2023-12-10";
-    db adx_threshold = 1;
-    int n = 10;
+int main(int argc,const char* argv[]){
+    string symbol = argv[1];
+    int x = stoi(argv[2]);
+    string start_date = argv[5];
+    string end_date = argv[6];
+    db adx_threshold = stod(argv[4]);
+    int n = stoi(argv[3]);
     vector<pair<string,string>>daily_cashflow;
     vector<vector<string>>order_stats;
     vector<pair<string,vector<db>>> data;

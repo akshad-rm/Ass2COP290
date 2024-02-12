@@ -11,6 +11,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <algorithm>
 #define db double
 
 using namespace std;
@@ -186,6 +187,7 @@ void solve(int x,int n,db oversold_threshold,db overbought_threshold,string star
     res_file.close();
     
     
+    
 }
 
 
@@ -225,14 +227,14 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
 
 
 
-int main(){
-    string symbol = "SBIN";
-    int x = 100;
-    int n = 13;
-    db oversold_threshold = 30;
-    db overbought_threshold = 70;
-    string start_date = "2023-02-05";
-    string end_date = "2023-12-10";
+int main(int argc,const char * argv[]){
+    string symbol = argv[1];
+    int x = stoi(argv[2]);
+    int n = stoi(argv[3]);
+    db oversold_threshold = stod(argv[4]);
+    db overbought_threshold = stod(argv[5]);
+    string start_date = argv[6];
+    string end_date = argv[7];
     vector<pair<string,string>>daily_cashflow;
     vector<vector<string>>order_stats;
     vector<pair<string,db>> data;

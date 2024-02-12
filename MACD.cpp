@@ -11,6 +11,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <algorithm>
 #define db double
 
 using namespace std;
@@ -54,6 +55,8 @@ void get_data(vector<pair<string,db>>&data){
         }
         
     }
+    
+    
     datafile.close();
     
     
@@ -65,6 +68,7 @@ void get_data(vector<pair<string,db>>&data){
         data.push_back({date,close_price});
     }
     reverse(data.begin(),data.end());
+    
     
 }
 
@@ -85,6 +89,7 @@ void solve(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_
         last_day++;
     }
     last_day--;
+    
     map<int,db>macd;
     map<int,db>short_ewm;
     db lookback_period = 12;
@@ -126,7 +131,7 @@ void solve(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_
     db cash_in_hand = 0;
     int hold_quantity = 0;
     for(int current_day = first_day;current_day<=last_day;current_day++){
-        ;
+        
         db curr_signal = signal[current_day];
         db curr_macd = macd[current_day];
         //cout<<curr_signal<<endl;
@@ -136,15 +141,18 @@ void solve(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&daily_
             order_stats.push_back({data[current_day].first,"BUY","1",to_string(data[current_day].second)});
             hold_quantity++;
             
+            
         }
         else if(curr_macd<curr_signal && hold_quantity>(-1*x)){
             cash_in_hand+=data[current_day].second;
             daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
             order_stats.push_back({data[current_day].first,"SELL","1",to_string(data[current_day].second)});
             hold_quantity--;
+            
         }
         else{
             daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
+            
         }
     }
     
@@ -192,15 +200,17 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
 
 
 
-int main(){
-    string symbol = "SBIN";
-    int x = 4;
-    string start_date = "2023-01-05";
-    string end_date = "2023-12-10";
+int main(int argc, const char * argv[]){
+    string symbol = argv[1];
+    int x = stoi(argv[2]);
+    string start_date = argv[3];
+    string end_date = argv[4];
+    
     vector<pair<string,string>>daily_cashflow;
     vector<vector<string>>order_stats;
     vector<pair<string,db>> data;
     get_data(data);
+    
     solve(x,data,daily_cashflow,order_stats,start_date,end_date);
     write_data(daily_cashflow,order_stats);
 }
