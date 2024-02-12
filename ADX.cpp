@@ -246,7 +246,7 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
     for(auto &x:order_stats){
     	x[0] = convert_to_d(x[0]);
     }
-    ofstream dc_file("daily cashflow.csv");
+    ofstream dc_file("daily_cashflow.csv");
     dc_file<<"Date,Cashflow"<<endl;
     for(auto x:daily_cashflow){
         dc_file<<x.first<<","<<x.second<<endl;
