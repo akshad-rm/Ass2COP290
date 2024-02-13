@@ -86,18 +86,18 @@ Name: Akshad Mhaske Entry No.: 2022CS11611
 
 -   This was done by first obtaining 8 linear equations in 8 variables
     (betas) through manual calculation. In this the square error
-    (Σ(y-y<sub>i</sub>)<sup>2<sup>) was minimised by differentiating it with each beta
+    (Σ(y-y<sub>i</sub>)<sup>2</sup>) was minimised by differentiating it with each beta
     and then equalling it to zero (taking the derivative as 0). Thus
     taking 8 partial derivatives (one w.r.t to each beta) and equating
     them to 0 formed 8 linear equations.
 
 -   The coefficients of the variables (betas) were of the form Σx<sub>i</sub> ,
-    Σx<sub>i</sub>~^2^ , Σx~i~x~j~ and Σx~i~y , which were obtained from the data
-    in linear time (x~i~ are the data points for a particular parameter,
+    Σx<sub>i</sub><sup>2</sup> , Σx<sub>i</sub>x<sub>j</sub> and Σx<sub>i</sub>y , which were obtained from the data
+    in linear time (x<sub>i</sub> are the data points for a particular parameter,
     y is the Close price).
 
 -   The system of equations was then solved using Gauss-Jordan method in
-    O(8^3^) or O(1) constant time.
+    O(8<sup>3</sup>) or O(1) constant time.
 
 7.  **Best of All:**
 
@@ -130,8 +130,7 @@ Obtained results were plotted on the below graphs:
 
 1.  **Time-based comparisons:**
 
-![](./image1.jpg){width="3.984022309711286in"
-height="2.4634536307961503in"}![](./image2.jpg){width="4.065970034995625in"
+![](./image1.jpg)![](./image2.jpg){width="4.065970034995625in"
 height="2.5141251093613297in"}![](./image3.jpg){width="4.024011373578302in"
 height="2.488180227471566in"}![](./image4.jpg){width="3.8926552930883638in"
 height="2.4069586614173226in"}
