@@ -464,7 +464,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,db stop_loss
     
     
     ofstream res_file("final_pnl.txt");
-    res_file<<cash_in_hand<<endl;
+    res_file<<to_string(cash_in_hand)<<endl;
     res_file.close();
     
 
