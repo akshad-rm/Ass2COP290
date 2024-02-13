@@ -48,4 +48,10 @@ else
 endif
 	
 endif
+ifeq ($(strategy),BEST_OF_ALL)
+	python3 best_all_data.py $(symbol) $(start_date) $(end_date)
+	g++ -fopenmp best_of_all.cpp
+	./a.out $(symbol) $(start_date) $(end_date)
+	rm data_basic.csv data_dma.csv data_dma++.csv data_run.csv data_macd.csv data_rsi.csv data_adx.csv data_lr.csv
+endif
 

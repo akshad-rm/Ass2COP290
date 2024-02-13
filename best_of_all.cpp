@@ -392,6 +392,16 @@ db solve_dma_plus(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<st
                 }
             }    
         }
+        else if((100*(data[i].second))>= (100+p)*ama && den_zero==false && trades.size()>0 && i-trades.back().first>=max_hold_days && trades.back().second==1){
+        	trades.pop_back();
+            daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
+            trades.insert(trades.begin(),pair<int,int>(i,1));
+        }
+        else if((100*(data[i].second))<= (100-p)*ama && den_zero==false && trades.size()>0 && i-trades.back().first>=max_hold_days && trades.back().second==-1){
+        	trades.pop_back();
+            daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
+            trades.insert(trades.begin(),pair<int,int>(i,-1));
+        }
         else{
             if(trades.size()>0 && i-trades.back().first>=max_hold_days){
                 if(trades.back().second==1 && hold_quantity>(-1*x)){
@@ -434,6 +444,7 @@ db solve_dma_plus(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<st
         hold_quantity = 0;
     }
     return cash_in_hand;
+    
     
     
 }
@@ -827,21 +838,21 @@ db solve_macd(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&dai
         //cout<<curr_signal<<endl;
         if(curr_macd>curr_signal && hold_quantity<x){
             cash_in_hand-=data[current_day].second;
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
-            order_stats.push_back({convert_to_d(data[current_day].first),"BUY","1",to_string(data[current_day].second)});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
+            order_stats.push_back({data[current_day].first,"BUY","1",to_string(data[current_day].second)});
             hold_quantity++;
             
             
         }
         else if(curr_macd<curr_signal && hold_quantity>(-1*x)){
             cash_in_hand+=data[current_day].second;
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
-            order_stats.push_back({convert_to_d(data[current_day].first),"SELL","1",to_string(data[current_day].second)});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
+            order_stats.push_back({data[current_day].first,"SELL","1",to_string(data[current_day].second)});
             hold_quantity--;
             
         }
         else{
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
             
         }
     }
@@ -856,7 +867,6 @@ db solve_macd(int x,vector<pair<string,db>>&data,vector<pair<string,string>>&dai
         hold_quantity = 0;
     }
     return cash_in_hand;
-    
 }
 
 void get_data_rsi(vector<pair<string,db>>&data){
@@ -943,18 +953,18 @@ db solve_rsi(int x,int n,db oversold_threshold,db overbought_threshold,string st
     }
     if(RSI<=oversold_threshold && hold_quantity<x){
         cash_in_hand-=data[first_day].second;
-        daily_cashflow.push_back({convert_to_d(data[first_day].first),to_string(cash_in_hand)});
-        order_stats.push_back({convert_to_d(data[first_day].first),"BUY","1",to_string(data[first_day].second)});
+        daily_cashflow.push_back({data[first_day].first,to_string(cash_in_hand)});
+        order_stats.push_back({data[first_day].first,"BUY","1",to_string(data[first_day].second)});
         hold_quantity++;
     }
     else if(RSI>=overbought_threshold && hold_quantity>(-1*x)){
         cash_in_hand+=data[first_day].second;
-        daily_cashflow.push_back({convert_to_d(data[first_day].first),to_string(cash_in_hand)});
-        order_stats.push_back({convert_to_d(data[first_day].first),"SELL","1",to_string(data[first_day].second)});
+        daily_cashflow.push_back({data[first_day].first,to_string(cash_in_hand)});
+        order_stats.push_back({data[first_day].first,"SELL","1",to_string(data[first_day].second)});
         hold_quantity--;
     }
     else{
-        daily_cashflow.push_back({convert_to_d(data[first_day].first),to_string(cash_in_hand)});
+        daily_cashflow.push_back({data[first_day].first,to_string(cash_in_hand)});
     }
     
     for(int current_day = first_day+1;current_day<=last_day;current_day++){
@@ -988,18 +998,18 @@ db solve_rsi(int x,int n,db oversold_threshold,db overbought_threshold,string st
         }
         if(RSI<oversold_threshold && hold_quantity<x){
             cash_in_hand-=data[current_day].second;
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
-            order_stats.push_back({convert_to_d(data[current_day].first),"BUY","1",to_string(data[current_day].second)});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
+            order_stats.push_back({data[current_day].first,"BUY","1",to_string(data[current_day].second)});
             hold_quantity++;
         }
         else if(RSI>overbought_threshold && hold_quantity>(-1*x)){
             cash_in_hand+=data[current_day].second;
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
-            order_stats.push_back({convert_to_d(data[current_day].first),"SELL","1",to_string(data[current_day].second)});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
+            order_stats.push_back({data[current_day].first,"SELL","1",to_string(data[current_day].second)});
             hold_quantity--;
         }
         else{
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
         }
         
     }
@@ -1089,12 +1099,18 @@ db solve_adx(int x,int n, db adx_threshold,string start_date,string end_date,vec
         else{
             DMp[curr] = 0;
         }
+        if(curr>=first_day){
+        	
+        }
         
         if(data[curr].second[2] - data[curr-1].second[2]>0){
             DMm[curr] = data[curr].second[2] - data[curr-1].second[2];
         }
         else{
             DMm[curr] = 0;
+        }
+        if(curr>=first_day){
+        	
         }
         
         
@@ -1121,8 +1137,6 @@ db solve_adx(int x,int n, db adx_threshold,string start_date,string end_date,vec
     for(int curr = first_day+1;curr<=last_day;curr++){
         ewm = alpha*((DMp[curr]/ATR[curr])-ewm)+ewm;
         DIp[curr]=  ewm;
-        
-        
     }
     
     map<int,db>DIm;
@@ -1138,52 +1152,55 @@ db solve_adx(int x,int n, db adx_threshold,string start_date,string end_date,vec
     for(int curr = first_day;curr<=last_day;curr++){
         db dx;
         if(DIp[curr]+DIm[curr]==0){
+        
             dx = 0;
         }
         else{
-            dx = ((DIp[curr]-DIm[curr])/(DIp[curr]+DIm[curr]))*100;
+            dx = (((DIp[curr]-DIm[curr])/(DIp[curr]+DIm[curr])))*100;
         }
         DX[curr] = dx;
+        
         
     }
     map<int,db>ADX;
     ewm = DX[first_day];
-    ADX[first_day] = ewm;
     for(int curr = first_day+1;curr<=last_day;curr++){
-        ewm = alpha*((DX[curr])-ewm)+ewm;
+        ewm = alpha*((DX[curr])-ewm)  +ewm;
         ADX[curr] = ewm;
+        
     }
     db cash_in_hand = 0;
     int hold_quantity = 0;
     for(int current_day = first_day;current_day<=last_day;current_day++){
         db adx = ADX[current_day];
-        
+      
+        //cout<<data[current_day].first<<" "<<true_range[current_day]<<" "<<adx<<" "<<ATR[current_day]<<" "<<DMp[current_day]<<" "<<DMm[current_day]<<" "<<DIp[current_day]<<" "<<DIm[current_day]<<endl;
         if(adx>=adx_threshold && hold_quantity<x && DX[current_day]!=0){
             cash_in_hand-=data[current_day].second[0];
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
-            order_stats.push_back({convert_to_d(data[current_day].first),"BUY","1",to_string(data[current_day].second[0])});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
+            order_stats.push_back({data[current_day].first,"BUY","1",to_string(data[current_day].second[0])});
             hold_quantity++;
         }
         else if(adx<=adx_threshold && hold_quantity>(-1*x) && DX[current_day]!=0){
             cash_in_hand+=data[current_day].second[0];
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
-            order_stats.push_back({convert_to_d(data[current_day].first),"SELL","1",to_string(data[current_day].second[0])});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
+            order_stats.push_back({data[current_day].first,"SELL","1",to_string(data[current_day].second[0])});
             hold_quantity--;
         }
         else{
-            daily_cashflow.push_back({convert_to_d(data[current_day].first),to_string(cash_in_hand)});
+            daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
         }
     }
     if(hold_quantity>0){
-        cash_in_hand += data[last_day].second[1]*hold_quantity;
+        cash_in_hand += data[last_day].second[0]*hold_quantity;
         hold_quantity = 0;
             
     }
     else if(hold_quantity<0){
-        cash_in_hand -= ((data[last_day].second[1])*abs(hold_quantity));
+        cash_in_hand -= ((data[last_day].second[0])*abs(hold_quantity));
         hold_quantity = 0;
     }
-    return cash_in_hand;
+    return cash_in_hand;    
 }
     
 
@@ -1239,6 +1256,7 @@ int main(int argc, const char * argv[]) {
 			   		get_data_basic(data["basic"]);
 				    db temp1 = solve_basic(7,5,data["basic"],daily_cashflow["basic"],order_stats["basic"]);
 				    pnl["basic"] = temp1;
+				    cout<<"basic"<<temp1<<endl;
 				}    
 		   	}           
        }
@@ -1250,6 +1268,7 @@ int main(int argc, const char * argv[]) {
 		   		get_data_dma(data["dma"]);
 		        db temp2 = solve_dma(50,5,2,data["dma"],daily_cashflow["dma"],order_stats["dma"]);
 		        pnl["dma"] = temp2;
+		        cout<<"dma"<<temp2<<endl;
 		        }
 		   	}           
        }
@@ -1261,6 +1280,7 @@ int main(int argc, const char * argv[]) {
 		   		get_data_dma_plus(data["dma++"]);
 		        db temp3 = solve_dma_plus(14,5,5,2,0.2,28,data["dma++"],daily_cashflow["dma++"],order_stats["dma++"]);
 		        pnl["dma++"] = temp3;
+		        cout<<"dma++"<<temp3<<endl;
 		        }
 		   	}           
        }
@@ -1274,6 +1294,7 @@ int main(int argc, const char * argv[]) {
 		        vector<db> betas = get_betas(train_data);
 		        db temp_lr = solve_lr(2,5,lr_data,daily_cashflow["lr"],order_stats["lr"], betas);
 		        pnl["lr"] = temp_lr;
+		        cout<<"lr"<<temp_lr<<endl;
 		        }
 		   	}           
        }
@@ -1287,6 +1308,7 @@ int main(int argc, const char * argv[]) {
                 string ed = convert_to_y(end_date);
 		        db temp4 = solve_macd(5,data["macd"],daily_cashflow["macd"],order_stats["macd"],sd,ed);
 		        pnl["macd"] = temp4;
+		        cout<<"macd"<<temp4<<endl;
 		        }
 		   	}           
        }
@@ -1300,6 +1322,7 @@ int main(int argc, const char * argv[]) {
                 string ed = convert_to_y(end_date);
 		        db temp5 = solve_rsi(5,14,30,70,sd,ed,daily_cashflow["rsi"],order_stats["rsi"],data["rsi"]);
 		        pnl["rsi"] = temp5;
+		        cout<<"rsi"<<temp5<<endl;
 		        }
 		   	}           
        }
@@ -1313,6 +1336,7 @@ int main(int argc, const char * argv[]) {
                 string ed = convert_to_y(end_date);
 		        db temp6 = solve_adx(5,14,25,sd,ed,adx_data,daily_cashflow["adx"],order_stats["adx"]);
 		        pnl["adx"] = temp6;
+		        cout<<"adx"<<temp6<<endl;
 		        }
 		   	}           
        }
