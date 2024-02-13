@@ -130,10 +130,7 @@ Obtained results were plotted on the below graphs:
 
 1.  **Time-based comparisons:**
 
-![](./image1.jpg)![](./image2.jpg){width="4.065970034995625in"
-height="2.5141251093613297in"}![](./image3.jpg){width="4.024011373578302in"
-height="2.488180227471566in"}![](./image4.jpg){width="3.8926552930883638in"
-height="2.4069586614173226in"}
+![](./image1.jpg)![](./image2.jpg)![](./image3.jpg)![](./image4.jpg)
 
 2.  **Performance for stock choice:**
 
