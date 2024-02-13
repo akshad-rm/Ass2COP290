@@ -224,7 +224,7 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
         hold_quantity = 0;
     }
     ofstream res_file("final_pnl.txt");
-    res_file<<cash_in_hand<<endl;
+    res_file<<to_string(cash_in_hand)<<endl;
     res_file.close();
     
     
