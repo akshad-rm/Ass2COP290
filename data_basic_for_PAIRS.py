@@ -20,7 +20,7 @@ startdate_new = startdate.replace(year=startdate.year-3)
 
 df = stock_df(symbol=sym1,from_date=startdate_new,to_date=enddate,series="EQ")
 df = df[['DATE', 'CLOSE']]
-
+df = df.drop_duplicates() 
 df_copy = df
 ind = df_copy.index[df['DATE']==startdate]
 while len(ind)==0:
@@ -29,11 +29,12 @@ while len(ind)==0:
 df= df[:ind[0]+n+1]  
 df['DATE'] = df['DATE'].dt.strftime('%d/%m/%Y')
 
+
 df.to_csv(sym1+".csv",index=False)
 
 df = stock_df(symbol=sym2,from_date=startdate_new,to_date=enddate,series="EQ")
 df = df[['DATE', 'CLOSE']]
-
+df = df.drop_duplicates() 
 df_copy = df
 ind = df_copy.index[df['DATE']==startdate]
 while len(ind)==0:

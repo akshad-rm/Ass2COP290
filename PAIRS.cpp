@@ -64,7 +64,7 @@ void get_data(vector<pair<string,db>>&data_1,vector<pair<string,db>>&data_2,stri
             while (std::getline(ss, column, ',')) {
                 row_data.push_back(column);
             }
-
+		
             raw_data.push_back(row_data);
         }
         else{
@@ -123,8 +123,15 @@ void get_data(vector<pair<string,db>>&data_1,vector<pair<string,db>>&data_2,stri
     }
     reverse(data_2.begin(),data_2.end());
     
-    for(int i = 0;i<data_1.size();i++){
-    	cout<<data_1[i].first<<" "<<data_2[i].first<<endl;
+    if(data_1[0].first<data_2[0].first){
+    	while(data_1[0].first<data_2[0].first){
+    		data_1.erase(data_1.begin());
+    	}
+    }
+    if(data_2[0].first<data_1[0].first){
+    	while(data_2[0].first<data_1[0].first){
+    		data_2.erase(data_2.begin());
+    	}
     }
     
     
@@ -166,9 +173,12 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
     db rolling_square_window = 0;
     for(int i = first_day-n;i<=last_day;i++){
         spread[i] = data_1[i].second - data_2[i].second;
+        cout<<data_1[i].first<<" "<<data_1[i].second<<" "<<data_2[i].second<<endl;
     }
     for(int i = first_day-n;i<=first_day-1;i++){
         rolling_mean_window+=spread[i];
+        cout<<data_1[i].first<<" "<<spread[i]<<endl;
+        
         rolling_square_window+=(spread[i]*spread[i]);
         
     }
@@ -191,6 +201,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
         rolling_std = sqrt(rolling_std);
         
         z_score = (spread[curr_day] - rolling_mean[curr_day])/rolling_std;
+        cout<<data_1[curr_day].first<<" "<<rolling_mean[curr_day]*n<<" "<<rolling_square[curr_day]*n<<" "<<rolling_mean[curr_day]<<rolling_std<<" "<<z_score<<endl;
         
         if(z_score>threshold && hold_quantity_1>(-1*x) && hold_quantity_2<(x)){
             cash_in_hand+=data_1[curr_day].second;
@@ -222,7 +233,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
         else{
             daily_cashflow.push_back({data_1[curr_day].first,to_string(cash_in_hand)});
         }
-        //cout<<data_1[curr_day].first<<" "<<spread[curr_day]<<" "<<rolling_mean[curr_day]<<" "<<rolling_square[curr_day]<<"   "<<z_score<<endl;
+        
         
         
         
@@ -250,7 +261,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
     
     
     ofstream res_file("final_pnl.txt");
-    res_file<<cash_in_hand<<endl;
+    res_file<<to_string(cash_in_hand)<<endl;
     res_file.close();
     
 
@@ -266,9 +277,9 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
     	x.first = convert_to_d(x.first);
     }
     for(auto &x:order_stats_2){
-    	cout<<x[0]<<endl;
+    	
     	x[0] = convert_to_d(x[0]);
-    	cout<<x[0]<<endl;
+    	
     }
     
     for(auto &x:order_stats_1){
