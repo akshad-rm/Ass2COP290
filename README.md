@@ -2,9 +2,9 @@
 title: COP290 Assignment-1 Subtask-3
 ---
 
-Name: Vraj Parikh Name: Akshad Mhaske
+Name: Vraj Parikh   Entry No.: 2022CS11084
 
-Entry No.: 2022CS11084 Entry No.: 2022CS11611
+Name: Akshad Mhaske Entry No.: 2022CS11611
 
 # Overview:
 
@@ -24,7 +24,8 @@ Entry No.: 2022CS11084 Entry No.: 2022CS11611
 
 # Optimizations:
 
-1.  **BASIC:** Instead of checking data for past 'n' days to check for
+1.  **BASIC:** 
+-   Instead of checking data for past 'n' days to check for
     monotonicity, a counter was established to keep count of the stock
     price trend. If stock prices followed the monotonicity, counter was
     incremented, else the counter was set back to 1. The counter was
@@ -45,15 +46,15 @@ Entry No.: 2022CS11084 Entry No.: 2022CS11611
 3.  **DMA++**:
 
 -   The denominator for ER was calculated using the 'rolling window'
-    > method, adding the latest absolute price change and subtracting
-    > the one for 'n' days prior.
+    method, adding the latest absolute price change and subtracting
+    the one for 'n' days prior.
 
 -   The recursive variables were calculated by just performing the
-    > operations on the values obtained in the previous iteration.
+    operations on the values obtained in the previous iteration.
 
 -   The positions were stored as a queue (implemented using a vector).
-    > This allowed easy checking of the oldest position, as well as
-    > addition of a new position.
+    This allowed easy checking of the oldest position, as well as
+    addition of a new position.
 
 4.  **MACD**:
 
@@ -80,18 +81,18 @@ Entry No.: 2022CS11084 Entry No.: 2022CS11611
 
 -   **The calculation of the beta coefficients was done in linear time
     complexity, i.e., in O(n)**, where n is the size of the data, as
-    opposed to the general O(n^3^) method involving matrix operations on
+    opposed to the general O(n<sup>3</sup>) method involving matrix operations on
     the data matrix.
 
 -   This was done by first obtaining 8 linear equations in 8 variables
     (betas) through manual calculation. In this the square error
-    (Σ(y-y~i~)^2^) was minimised by differentiating it with each beta
+    (Σ(y-y<sub>i</sub>)<sup>2<sup>) was minimised by differentiating it with each beta
     and then equalling it to zero (taking the derivative as 0). Thus
     taking 8 partial derivatives (one w.r.t to each beta) and equating
     them to 0 formed 8 linear equations.
 
--   The coefficients of the variables (betas) were of the form Σx~i~ ,
-    Σx~i~^2^ , Σx~i~x~j~ and Σx~i~y , which were obtained from the data
+-   The coefficients of the variables (betas) were of the form Σx<sub>i</sub> ,
+    Σx<sub>i</sub>~^2^ , Σx~i~x~j~ and Σx~i~y , which were obtained from the data
     in linear time (x~i~ are the data points for a particular parameter,
     y is the Close price).
 
