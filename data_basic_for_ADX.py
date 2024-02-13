@@ -5,9 +5,7 @@ import sys
 from datetime import date,timedelta,datetime
 
 sym=sys.argv[1]
-print(sym)
 n=int(sys.argv[2])
-print(n)
 startdate=sys.argv[3]
 enddate= sys.argv[4]
 

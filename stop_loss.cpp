@@ -209,7 +209,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,db stop_loss
         rolling_std_map[curr_day] = rolling_std;
         
         z_score = (spread[curr_day] - rolling_mean[curr_day])/rolling_std;
-        cout<<data_1[curr_day].first<<" today's "<<rolling_mean[curr_day]<<" "<<rolling_square[curr_day]<<" "<<rolling_std<<" "<<z_score<<endl;
+        //cout<<data_1[curr_day].first<<" today's "<<rolling_mean[curr_day]<<" "<<rolling_square[curr_day]<<" "<<rolling_std<<" "<<z_score<<endl;
         int quant_1 = 0;
         int quant_2 = 0;
         if(positions.size()==0){
