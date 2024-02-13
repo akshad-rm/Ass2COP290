@@ -248,7 +248,7 @@ void solve(int p,int x,vector<pair<string,vector<db>>>&data,vector<pair<string,s
         hold_quantity = 0;
     }
     ofstream res_file("final_pnl.txt");
-    res_file<<cash_in_hand<<endl;
+    res_file<<to_string(cash_in_hand)<<endl;
     res_file.close(); 
 }
 
