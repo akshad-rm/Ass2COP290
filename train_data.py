@@ -15,7 +15,7 @@ startdate_new = startdate - timedelta(days=20)
 
 df = stock_df(symbol=sym,from_date=startdate_new,to_date=enddate,series="EQ")
 df=df[['DATE','CLOSE','PREV. CLOSE','OPEN','VWAP','LOW','HIGH','NO OF TRADES']]
-
+df = df.drop_duplicates()
 df_copy = df
 ind = df_copy.index[df['DATE']==startdate]
 while len(ind)==0:
