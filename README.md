@@ -1,9 +1,9 @@
 COP290 Assignment-1 Subtask-3
 =============================
 
-Name: Vraj Parikh   <div align="right">Entry No.: 2022CS11084</div>
+Name: Vraj Parikh       Entry No.: 2022CS11084
 
-Name: Akshad Mhaske Entry No.: 2022CS11611
+Name: Akshad Mhaske     Entry No.: 2022CS11611
 
 # Overview:
 
