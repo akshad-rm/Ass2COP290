@@ -18,7 +18,7 @@ startdate_new = startdate.replace(year=startdate.year-3)
 
 df = stock_df(symbol=sym,from_date=startdate_new,to_date=enddate,series="EQ")
 df = df[['DATE', 'CLOSE','HIGH','LOW','PREV. CLOSE']]
-
+df = df.drop_duplicates()
 df_copy = df
 ind = df_copy.index[df['DATE']==startdate]
 while len(ind)==0:
