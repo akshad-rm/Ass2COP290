@@ -117,7 +117,7 @@ void solve(int x,int n, db adx_threshold,string start_date,string end_date,vecto
     
     map<int,db>true_range;
     for(int curr = first_day - n+1;curr<=last_day;curr++){
-        db maximum = max(data[curr].second[1] - data[curr].second[2],max(data[curr].second[1] - data[curr].second[3],data[curr].second[2] - data[curr].second[3]));
+        db maximum = max(abs(data[curr].second[1] - data[curr].second[2]),max(abs(data[curr].second[1] - data[curr].second[3]),abs(data[curr].second[2] - data[curr].second[3])));
         true_range[curr] = maximum;
     }
     map<int,db>ATR;
