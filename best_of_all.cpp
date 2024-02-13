@@ -1256,7 +1256,6 @@ int main(int argc, const char * argv[]) {
 			   		get_data_basic(data["basic"]);
 				    db temp1 = solve_basic(7,5,data["basic"],daily_cashflow["basic"],order_stats["basic"]);
 				    pnl["basic"] = temp1;
-				    cout<<"basic"<<temp1<<endl;
 				}    
 		   	}           
        }
@@ -1268,7 +1267,6 @@ int main(int argc, const char * argv[]) {
 		   		get_data_dma(data["dma"]);
 		        db temp2 = solve_dma(50,5,2,data["dma"],daily_cashflow["dma"],order_stats["dma"]);
 		        pnl["dma"] = temp2;
-		        cout<<"dma"<<temp2<<endl;
 		        }
 		   	}           
        }
@@ -1280,7 +1278,6 @@ int main(int argc, const char * argv[]) {
 		   		get_data_dma_plus(data["dma++"]);
 		        db temp3 = solve_dma_plus(14,5,5,2,0.2,28,data["dma++"],daily_cashflow["dma++"],order_stats["dma++"]);
 		        pnl["dma++"] = temp3;
-		        cout<<"dma++"<<temp3<<endl;
 		        }
 		   	}           
        }
@@ -1294,7 +1291,6 @@ int main(int argc, const char * argv[]) {
 		        vector<db> betas = get_betas(train_data);
 		        db temp_lr = solve_lr(2,5,lr_data,daily_cashflow["lr"],order_stats["lr"], betas);
 		        pnl["lr"] = temp_lr;
-		        cout<<"lr"<<temp_lr<<endl;
 		        }
 		   	}           
        }
@@ -1308,7 +1304,6 @@ int main(int argc, const char * argv[]) {
                 string ed = convert_to_y(end_date);
 		        db temp4 = solve_macd(5,data["macd"],daily_cashflow["macd"],order_stats["macd"],sd,ed);
 		        pnl["macd"] = temp4;
-		        cout<<"macd"<<temp4<<endl;
 		        }
 		   	}           
        }
@@ -1322,7 +1317,6 @@ int main(int argc, const char * argv[]) {
                 string ed = convert_to_y(end_date);
 		        db temp5 = solve_rsi(5,14,30,70,sd,ed,daily_cashflow["rsi"],order_stats["rsi"],data["rsi"]);
 		        pnl["rsi"] = temp5;
-		        cout<<"rsi"<<temp5<<endl;
 		        }
 		   	}           
        }
@@ -1336,7 +1330,6 @@ int main(int argc, const char * argv[]) {
                 string ed = convert_to_y(end_date);
 		        db temp6 = solve_adx(5,14,25,sd,ed,adx_data,daily_cashflow["adx"],order_stats["adx"]);
 		        pnl["adx"] = temp6;
-		        cout<<"adx"<<temp6<<endl;
 		        }
 		   	}           
        }
