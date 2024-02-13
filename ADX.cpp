@@ -237,7 +237,7 @@ void solve(int x,int n, db adx_threshold,string start_date,string end_date,vecto
         hold_quantity = 0;
     }
     ofstream res_file("final_pnl.txt");
-    res_file<<cash_in_hand<<endl;
+    res_file<<to_string(cash_in_hand)<<endl;
     res_file.close();
     
     
