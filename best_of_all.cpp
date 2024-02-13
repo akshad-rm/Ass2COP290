@@ -1329,7 +1329,7 @@ int main(int argc, const char * argv[]) {
     }
     write_data(daily_cashflow[max_pnl],order_stats[max_pnl]);
     ofstream res_file("final_pnl.txt");
-    res_file<<max<<endl;
+    res_file<<to_string(max)<<endl;
     res_file.close();
     
     return 0;
