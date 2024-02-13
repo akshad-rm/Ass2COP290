@@ -173,11 +173,11 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
     db rolling_square_window = 0;
     for(int i = first_day-n;i<=last_day;i++){
         spread[i] = data_1[i].second - data_2[i].second;
-        cout<<data_1[i].first<<" "<<data_1[i].second<<" "<<data_2[i].second<<endl;
+        //cout<<data_1[i].first<<" "<<data_1[i].second<<" "<<data_2[i].second<<endl;
     }
     for(int i = first_day-n;i<=first_day-1;i++){
         rolling_mean_window+=spread[i];
-        cout<<data_1[i].first<<" "<<spread[i]<<endl;
+        //cout<<data_1[i].first<<" "<<spread[i]<<endl;
         
         rolling_square_window+=(spread[i]*spread[i]);
         
@@ -201,7 +201,7 @@ void solve(string symbol_1,string symbol_2,int x,int n,db threshold,string start
         rolling_std = sqrt(rolling_std);
         
         z_score = (spread[curr_day] - rolling_mean[curr_day])/rolling_std;
-        cout<<data_1[curr_day].first<<" "<<rolling_mean[curr_day]*n<<" "<<rolling_square[curr_day]*n<<" "<<rolling_mean[curr_day]<<rolling_std<<" "<<z_score<<endl;
+       // cout<<data_1[curr_day].first<<" "<<rolling_mean[curr_day]*n<<" "<<rolling_square[curr_day]*n<<" "<<rolling_mean[curr_day]<<rolling_std<<" "<<z_score<<endl;
         
         if(z_score>threshold && hold_quantity_1>(-1*x) && hold_quantity_2<(x)){
             cash_in_hand+=data_1[curr_day].second;
