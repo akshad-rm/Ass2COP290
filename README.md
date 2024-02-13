@@ -1,6 +1,5 @@
----
-title: COP290 Assignment-1 Subtask-3
----
+COP290 Assignment-1 Subtask-3
+=============================
 
 Name: Vraj Parikh   Entry No.: 2022CS11084
 
@@ -134,16 +133,11 @@ Obtained results were plotted on the below graphs:
 
 2.  **Performance for stock choice:**
 
-![](./image5.jpg){width="3.7796609798775154in"
-height="2.3370898950131234in"}![](./image6.jpg){width="3.8375448381452317in"
-height="2.37288167104112in"}![](./image7.jpg){width="3.810132327209099in"
-height="2.3559317585301836in"}![](./image8.jpg){width="3.85581583552056in"
-height="2.3841797900262467in"}
+![](./image5.jpg)![](./image6.jpg)![](./image7.jpg)![](./image8.jpg)
 
 3.  **Overall performance:**
 
-![](./image9.jpg){width="6.268055555555556in"
-height="3.8805555555555555in"}
+![](./image9.jpg)
 
 Observations made:
 
