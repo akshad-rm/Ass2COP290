@@ -210,7 +210,7 @@ void solve(int x,int n, db adx_threshold,string start_date,string end_date,vecto
     for(int current_day = first_day;current_day<=last_day;current_day++){
         db adx = ADX[current_day];
       
-        cout<<data[current_day].first<<" "<<true_range[current_day]<<" "<<adx<<" "<<ATR[current_day]<<" "<<DMp[current_day]<<" "<<DMm[current_day]<<" "<<DIp[current_day]<<" "<<DIm[current_day]<<endl;
+       // cout<<data[current_day].first<<" "<<true_range[current_day]<<" "<<adx<<" "<<ATR[current_day]<<" "<<DMp[current_day]<<" "<<DMm[current_day]<<" "<<DIp[current_day]<<" "<<DIm[current_day]<<endl;
         if(adx>=adx_threshold && hold_quantity<x && DX[current_day]!=0){
             cash_in_hand-=data[current_day].second[0];
             daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
