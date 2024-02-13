@@ -130,12 +130,18 @@ void solve(int x,int n, db adx_threshold,string start_date,string end_date,vecto
         else{
             DMp[curr] = 0;
         }
+        if(curr>=first_day){
+        	
+        }
         
         if(data[curr].second[2] - data[curr-1].second[2]>0){
             DMm[curr] = data[curr].second[2] - data[curr-1].second[2];
         }
         else{
             DMm[curr] = 0;
+        }
+        if(curr>=first_day){
+        	
         }
         
         
@@ -179,26 +185,32 @@ void solve(int x,int n, db adx_threshold,string start_date,string end_date,vecto
     for(int curr = first_day;curr<=last_day;curr++){
         db dx;
         if(DIp[curr]+DIm[curr]==0){
+        
             dx = 0;
         }
         else{
-            dx = ((DIp[curr]-DIm[curr])/(DIp[curr]+DIm[curr]))*100;
+            dx = (((DIp[curr]-DIm[curr])/(DIp[curr]+DIm[curr])))*100;
         }
         DX[curr] = dx;
+        
         
     }
     map<int,db>ADX;
     ewm = DX[first_day];
-    ADX[first_day] = ewm;
+    
+    
+    
     for(int curr = first_day+1;curr<=last_day;curr++){
-        ewm = alpha*((DX[curr])-ewm)+ewm;
+        ewm = alpha*((DX[curr])-ewm)  +ewm;
         ADX[curr] = ewm;
+        
     }
     db cash_in_hand = 0;
     int hold_quantity = 0;
     for(int current_day = first_day;current_day<=last_day;current_day++){
         db adx = ADX[current_day];
-        
+      
+        cout<<data[current_day].first<<" "<<true_range[current_day]<<" "<<adx<<" "<<ATR[current_day]<<" "<<DMp[current_day]<<" "<<DMm[current_day]<<" "<<DIp[current_day]<<" "<<DIm[current_day]<<endl;
         if(adx>=adx_threshold && hold_quantity<x && DX[current_day]!=0){
             cash_in_hand-=data[current_day].second[0];
             daily_cashflow.push_back({data[current_day].first,to_string(cash_in_hand)});
@@ -216,16 +228,16 @@ void solve(int x,int n, db adx_threshold,string start_date,string end_date,vecto
         }
     }
     if(hold_quantity>0){
-        cash_in_hand += data[last_day].second[1]*hold_quantity;
+        cash_in_hand += data[last_day].second[0]*hold_quantity;
         hold_quantity = 0;
             
     }
     else if(hold_quantity<0){
-        cash_in_hand -= ((data[last_day].second[1])*abs(hold_quantity));
+        cash_in_hand -= ((data[last_day].second[0])*abs(hold_quantity));
         hold_quantity = 0;
     }
     ofstream res_file("final_pnl.txt");
-    res_file<<to_string(cash_in_hand)<<endl;
+    res_file<<cash_in_hand<<endl;
     res_file.close();
     
     
@@ -246,7 +258,7 @@ void write_data(vector<pair<string,string>>&daily_cashflow,vector<vector<string>
     for(auto &x:order_stats){
     	x[0] = convert_to_d(x[0]);
     }
-    ofstream dc_file("daily_cashflow.csv");
+    ofstream dc_file("daily cashflow.csv");
     dc_file<<"Date,Cashflow"<<endl;
     for(auto x:daily_cashflow){
         dc_file<<x.first<<","<<x.second<<endl;
