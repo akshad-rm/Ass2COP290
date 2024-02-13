@@ -172,6 +172,16 @@ void solve(int n,int x,int p,db c1,db c2,int max_hold_days,vector<pair<string,db
                 }
             }    
         }
+        else if((100*(data[i].second))>= (100+p)*ama && den_zero==false && trades.size()>0 && i-trades.back().first>=max_hold_days && trades.back().second==1){
+        	trades.pop_back();
+            daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
+            trades.insert(trades.begin(),pair<int,int>(i,1));
+        }
+        else if((100*(data[i].second))<= (100-p)*ama && den_zero==false && trades.size()>0 && i-trades.back().first>=max_hold_days && trades.back().second==-1){
+        	trades.pop_back();
+            daily_cashflow.push_back({data[i].first,to_string(cash_in_hand)});
+            trades.insert(trades.begin(),pair<int,int>(i,-1));
+        }
         else{
             if(trades.size()>0 && i-trades.back().first>=max_hold_days){
                 if(trades.back().second==1 && hold_quantity>(-1*x)){
